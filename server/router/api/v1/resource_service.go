@@ -285,7 +285,12 @@ func (s *APIV1Service) convertResourceFromStore(ctx context.Context, resource *s
 		Size:       resource.Size,
 	}
 	if resource.StorageType == storepb.ResourceStorageType_EXTERNAL || resource.StorageType == storepb.ResourceStorageType_S3 {
-		resourceMessage.ExternalLink = resource.Reference
+		prefixUrl := os.Getenv("S3_PREFIX_URL")
+		if resource.StorageType == storepb.ResourceStorageType_S3 && prefixUrl != "" {
+			resourceMessage.ExternalLink = prefixUrl + resource.Payload.GetS3Object().GetKey()
+		} else {
+			resourceMessage.ExternalLink = resource.Reference
+		}
 	}
 	if resource.MemoID != nil {
 		memo, _ := s.Store.GetMemo(ctx, &store.FindMemo{
