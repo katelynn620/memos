@@ -5,7 +5,7 @@ import (
 	"log"
 
 	// Import the PostgreSQL driver.
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/pkg/errors"
 
 	"github.com/usememos/memos/server/profile"
@@ -24,7 +24,7 @@ func NewDB(profile *profile.Profile) (store.Driver, error) {
 	}
 
 	// Open the PostgreSQL connection
-	db, err := sql.Open("postgres", profile.DSN)
+	db, err := sql.Open("pgx", profile.DSN)
 	if err != nil {
 		log.Printf("Failed to open database: %s", err)
 		return nil, errors.Wrapf(err, "failed to open database: %s", profile.DSN)
